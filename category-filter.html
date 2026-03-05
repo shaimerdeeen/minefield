@@ -34,7 +34,7 @@
 </head>
 <body>
 <div id='controls'>
-  <button class='filter-btn active' onclick='setFilter("ALL")'>All</button>
+  <button class='filter-btn active' onclick='setFilter("Все")'>All</button>
   <button class='filter-btn' onclick='setFilter("INF")'>INF</button>
   <button class='filter-btn' onclick='setFilter("IND")'>IND</button>
 </div>
@@ -73,7 +73,14 @@
       marker: {
         size: 2,
         color: cus,
-        colorscale: 'YlOrRd',
+        colorscale: [
+          [0,    '#f7fbff'],
+          [0.5,  '#6baed6'],
+          [0.75, '#2171b5'],
+          [0.9,  '#08519c'],
+          [0.95, '#08306b'],
+          [1,    '#03051a']
+        ],
         colorbar: {
           title: 'Cu (%)',
           tickfont: { color: '#ffffff' },
