@@ -45,9 +45,12 @@
           [1,    '#03051a']
         ],
         colorbar: {
-          title: 'Cu (%)',
-          tickfont: { color: '#ffffff' },
-          titlefont: { color: '#ffffff' }
+          title: { text: 'Cu (%)', font: { family: 'Segoe UI', size: 10 }, side: 'right' },
+          tickfont: { color: '#ffffff', family: 'Segoe UI', size: 9 },
+          titlefont: { color: '#ffffff', family: 'Segoe UI', size: 10 },
+          y: 0.5,
+          len: 0.6,
+          yanchor: 'middle'
         },
         opacity: 0.85
       }
@@ -71,22 +74,23 @@
       paper_bgcolor: '#0d1117',
       scene: {
         bgcolor: '#0d1117',
-        xaxis: { title: 'Долгота', color: '#ffffff' },
-        yaxis: { title: 'Широта',  color: '#ffffff' },
+        xaxis: { title: 'Долгота', font: { family: 'Segoe UI', size: 10 } }, color: '#ffffff', tickfont: { family: 'Segoe UI', size: 9 } },
+        yaxis: { title: 'Широта',  font: { family: 'Segoe UI', size: 10 } }, color: '#ffffff', tickfont: { family: 'Segoe UI', size: 9 } },
         zaxis: {
-          title: 'Глубина (м)',
+          title: { text: 'Глубина (м)', font: { family: 'Segoe UI', size: 10 } },
           color: '#ffffff',
+          tickfont: { family: 'Segoe UI', size: 9 },
           autorange: false,
           range: [depthMin, depthMax]
         }
       },
       margin: { l: 0, r: 0, t: 0, b: 0 },
-      font: { color: '#ffffff' },
+      font: { color: '#ffffff', family: 'Segoe UI', size: 10 },
       legend: {
-        font: { color: '#ffffff' },
+        font: { color: '#ffffff', family: 'Segoe UI', size: 10 },
         bgcolor: '#0d1117',
         x: 0,
-        y: 1,
+        y: 0.85,
         xanchor: 'left',
         yanchor: 'top'
       }
