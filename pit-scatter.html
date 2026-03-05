@@ -70,7 +70,6 @@
     var layout = {
       paper_bgcolor: '#0d1117',
       scene: {
-        showlegend: false,
         bgcolor: '#0d1117',
         xaxis: { title: 'Долгота', color: '#ffffff' },
         yaxis: { title: 'Широта',  color: '#ffffff' },
@@ -85,7 +84,11 @@
       font: { color: '#ffffff' },
       legend: {
         font: { color: '#ffffff' },
-        bgcolor: '#0d1117'
+        bgcolor: '#0d1117',
+        x: 0,
+        y: 1,
+        xanchor: 'left',
+        yanchor: 'top'
       }
     };
 
