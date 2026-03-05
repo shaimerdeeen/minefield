@@ -36,7 +36,14 @@
       marker: {
         size: 2,
         color: cus,
-        colorscale: 'YlOrRd',
+        colorscale: [
+          [0,   '#f7fbff'],
+          [0.2, '#c6dbef'],
+          [0.4, '#6baed6'],
+          [0.6, '#2171b5'],
+          [0.8, '#08519c'],
+          [1,   '#08306b']
+        ],
         colorbar: {
           title: 'Cu (%)',
           tickfont: { color: '#ffffff' },
