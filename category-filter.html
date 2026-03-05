@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src='https://cdn.plot.ly/plotly-2.26.0.min.js'></script>
+  <style>
+    body { margin:0; padding:0; background:#0d1117; font-family: sans-serif; }
+    #controls {
+      position: absolute;
+      top: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 999;
+      display: flex;
+      gap: 10px;
+    }
+    .filter-btn {
+      background: #1c2333;
+      color: #ffffff;
+      border: 1px solid #444;
+      padding: 6px 18px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 13px;
+      transition: background 0.2s;
+    }
+    .filter-btn.active {
+      background: #2171b5;
+      border-color: #2171b5;
+    }
+    .filter-btn:hover {
+      background: #2c3e5e;
+    }
+  </style>
+</head>
+<body>
+<div id='controls'>
+  <button class='filter-btn active' onclick='setFilter("ALL")'>All</button>
+  <button class='filter-btn' onclick='setFilter("INF")'>INF</button>
+  <button class='filter-btn' onclick='setFilter("IND")'>IND</button>
+</div>
+<div id='plot' style='width:100%;height:100vh;'></div>
+<script>
+  var allOre = [];
+  var currentFilter = 'ALL';
+
+  function toNum(v) {
+    return parseFloat(String(v).replace(',', '.'));
+  }
+
+  function getFilteredData() {
+    if (currentFilter === 'ALL') return allOre;
+    return allOre.filter(function(d) { return d["Категория"] === currentFilter; });
+  }
+
+  function renderPlot() {
+    var data = getFilteredData();
+
+    var lats   = data.map(function(d) { return d["Широта"];  });
+    var lons   = data.map(function(d) { return d["Долгота"]; });
+    var depths = data.map(function(d) { return d["Глубина"]; });
+    var cus    = data.map(function(d) { return d["Cu_%"];    });
+
+    var depthMin = Math.min.apply(null, depths);
+    var depthMax = Math.max.apply(null, depths);
+
+    var oreTrace = {
+      type: 'scatter3d',
+      mode: 'markers',
+      name: 'Ore Body',
+      x: lons,
+      y: lats,
+      z: depths,
+      marker: {
+        size: 2,
+        color: cus,
+        colorscale: 'YlOrRd',
+        colorbar: {
+          title: 'Cu (%)',
+          tickfont: { color: '#ffffff' },
+          titlefont: { color: '#ffffff' }
+        },
+        opacity: 0.85
+      }
+    };
+
+    var layout = {
+      paper_bgcolor: '#0d1117',
+      scene: {
+        bgcolor: '#0d1117',
+        xaxis: { title: 'Долгота', color: '#ffffff' },
+        yaxis: { title: 'Широта',  color: '#ffffff' },
+        zaxis: {
+          title: 'Глубина (м)',
+          color: '#ffffff',
+          autorange: false,
+          range: [depthMin, depthMax]
+        }
+      },
+      margin: { l: 0, r: 0, t: 40, b: 0 },
+      font: { color: '#ffffff' }
+    };
+
+    Plotly.react('plot', [oreTrace], layout, { responsive: true });
+  }
+
+  function setFilter(val) {
+    currentFilter = val;
+    document.querySelectorAll('.filter-btn').forEach(function(btn) {
+      btn.classList.remove('active');
+    });
+    event.target.classList.add('active');
+    renderPlot();
+  }
+
+  fetch('orebody.json')
+    .then(r => r.json())
+    .then(function(data) {
+      allOre = data;
+      renderPlot();
+    });
+</script>
+</body>
+</html>
