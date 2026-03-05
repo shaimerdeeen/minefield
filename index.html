@@ -6,13 +6,17 @@
 <body style='margin:0;padding:0;background:#0d1117;'>
 <div id='plot' style='width:100%;height:100vh;'></div>
 <script>
-  fetch('csvjson.json')
+  function toNum(v) {
+    return parseFloat(String(v).replace(',', '.'));
+  }
+
+  fetch('data.json')
     .then(r => r.json())
     .then(function(data) {
 
-      var lats   = data.map(function(d) { return d["Широта"]; });
-      var lons   = data.map(function(d) { return d["Долгота"]; });
-      var depths = data.map(function(d) { return d["Глубина"]; });
+      var lats   = data.map(function(d) { return toNum(d["Широта"]);  });
+      var lons   = data.map(function(d) { return toNum(d["Долгота"]); });
+      var depths = data.map(function(d) { return toNum(d["Глубина"]); });
 
       var depthMin = Math.min.apply(null, depths);
       var depthMax = Math.max.apply(null, depths);
