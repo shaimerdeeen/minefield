@@ -17,6 +17,7 @@
       var lats   = data.map(function(d) { return toNum(d["Широта"]);  });
       var lons   = data.map(function(d) { return toNum(d["Долгота"]); });
       var depths = data.map(function(d) { return toNum(d["Глубина"]); });
+      var cus    = data.map(function(d) { return toNum(d["Cu_%"]);    });
 
       var depthMin = Math.min.apply(null, depths);
       var depthMax = Math.max.apply(null, depths);
@@ -29,13 +30,19 @@
         z: depths,
         marker: {
           size: 2,
-          color: depths,
-          colorscale: 'Viridis',
+          color: cus,
+          colorscale: [
+            [0,   '#f7fbff'],
+            [0.2, '#c6dbef'],
+            [0.4, '#6baed6'],
+            [0.6, '#2171b5'],
+            [0.8, '#08519c'],
+            [1,   '#08306b']
+          ],
           colorbar: {
-            title: 'Глубина (м)',
+            title: 'Cu (%)',
             tickfont: { color: '#ffffff' },
-            titlefont: { color: '#ffffff' },
-            autorange: 'reversed'
+            titlefont: { color: '#ffffff' }
           },
           opacity: 0.85
         }
