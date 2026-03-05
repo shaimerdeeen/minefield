@@ -6,33 +6,26 @@
 <body style='margin:0;padding:0;background:#0d1117;'>
 <div id='plot' style='width:100%;height:100vh;'></div>
 <script>
-  function toNum(v) {
-    return parseFloat(String(v).replace(',', '.'));
-  }
-
   Promise.all([
-    fetch('data.json').then(r => r.json()),
+    fetch('orebody.json').then(r => r.json()),
     fetch('minefield.json').then(r => r.json())
   ]).then(function(results) {
 
-    var oreData  = results[0];
-    var pitData  = results[1];
+    var oreData = results[0];
+    var pitData = results[1];
 
-    // Ore body arrays
-    var lats   = oreData.map(function(d) { return toNum(d["Широта"]);  });
-    var lons   = oreData.map(function(d) { return toNum(d["Долгота"]); });
-    var depths = oreData.map(function(d) { return toNum(d["Глубина"]); });
-    var cus    = oreData.map(function(d) { return toNum(d["Cu_%"]);    });
+    var lats   = oreData.map(function(d) { return d["Широта"];  });
+    var lons   = oreData.map(function(d) { return d["Долгота"]; });
+    var depths = oreData.map(function(d) { return d["Глубина"]; });
+    var cus    = oreData.map(function(d) { return d["Cu_%"];    });
 
-    // Pit boundary arrays
-    var pitLats   = pitData.map(function(d) { return toNum(d["Широта"]);  });
-    var pitLons   = pitData.map(function(d) { return toNum(d["Долгота"]); });
-    var pitDepths = pitData.map(function(d) { return toNum(d["Глубина"]); });
+    var pitLats   = pitData.map(function(d) { return d["Широта"];  });
+    var pitLons   = pitData.map(function(d) { return d["Долгота"]; });
+    var pitDepths = pitData.map(function(d) { return d["Глубина"]; });
 
     var depthMin = Math.min(Math.min.apply(null, depths), Math.min.apply(null, pitDepths));
     var depthMax = Math.max(Math.max.apply(null, depths), Math.max.apply(null, pitDepths));
 
-    // Ore body trace — scatter points colored by Cu_%
     var oreTrace = {
       type: 'scatter3d',
       mode: 'markers',
@@ -56,11 +49,10 @@
           tickfont: { color: '#ffffff' },
           titlefont: { color: '#ffffff' }
         },
-        opacity: 0.15
+        opacity: 0.85
       }
     };
 
-    // Pit boundary trace — translucent mesh surface
     var pitTrace = {
       type: 'mesh3d',
       name: 'Pit Boundary',
@@ -68,8 +60,8 @@
       y: pitLats,
       z: pitDepths,
       alphahull: 5,
-      opacity: 0.95,
-      color: '#c48704',
+      opacity: 0.15,
+      color: '#ff9900',
       flatshading: true,
       lighting: { ambient: 1 },
       showscale: false
