@@ -10,63 +10,94 @@
     return parseFloat(String(v).replace(',', '.'));
   }
 
-  fetch('data.json')
-    .then(r => r.json())
-    .then(function(data) {
+  Promise.all([
+    fetch('data.json').then(r => r.json()),
+    fetch('minefield.json').then(r => r.json())
+  ]).then(function(results) {
 
-      var lats   = data.map(function(d) { return toNum(d["Широта"]);  });
-      var lons   = data.map(function(d) { return toNum(d["Долгота"]); });
-      var depths = data.map(function(d) { return toNum(d["Глубина"]); });
-      var cus    = data.map(function(d) { return toNum(d["Cu_%"]);    });
+    var oreData  = results[0];
+    var pitData  = results[1];
 
-      var depthMin = Math.min.apply(null, depths);
-      var depthMax = Math.max.apply(null, depths);
+    // Ore body arrays
+    var lats   = oreData.map(function(d) { return toNum(d["Широта"]);  });
+    var lons   = oreData.map(function(d) { return toNum(d["Долгота"]); });
+    var depths = oreData.map(function(d) { return toNum(d["Глубина"]); });
+    var cus    = oreData.map(function(d) { return toNum(d["Cu_%"]);    });
 
-      var trace = {
-        type: 'scatter3d',
-        mode: 'markers',
-        x: lons,
-        y: lats,
-        z: depths,
-        marker: {
-          size: 2,
-          color: cus,
-          colorscale: [
-            [0,   '#f7fbff'],
-            [0.2, '#c6dbef'],
-            [0.4, '#6baed6'],
-            [0.6, '#2171b5'],
-            [0.8, '#08519c'],
-            [1,   '#08306b']
-          ],
-          colorbar: {
-            title: 'Cu (%)',
-            tickfont: { color: '#ffffff' },
-            titlefont: { color: '#ffffff' }
-          },
-          opacity: 0.85
-        }
-      };
+    // Pit boundary arrays
+    var pitLats   = pitData.map(function(d) { return toNum(d["Широта"]);  });
+    var pitLons   = pitData.map(function(d) { return toNum(d["Долгота"]); });
+    var pitDepths = pitData.map(function(d) { return toNum(d["Глубина"]); });
 
-      var layout = {
-        paper_bgcolor: '#0d1117',
-        scene: {
-          bgcolor: '#0d1117',
-          xaxis: { title: 'Долгота', color: '#ffffff' },
-          yaxis: { title: 'Широта',  color: '#ffffff' },
-          zaxis: {
-            title: 'Глубина (м)',
-            color: '#ffffff',
-            autorange: false,
-            range: [depthMin, depthMax]
-          }
+    var depthMin = Math.min(Math.min.apply(null, depths), Math.min.apply(null, pitDepths));
+    var depthMax = Math.max(Math.max.apply(null, depths), Math.max.apply(null, pitDepths));
+
+    // Ore body trace — scatter points colored by Cu_%
+    var oreTrace = {
+      type: 'scatter3d',
+      mode: 'markers',
+      name: 'Ore Body',
+      x: lons,
+      y: lats,
+      z: depths,
+      marker: {
+        size: 2,
+        color: cus,
+        colorscale: [
+          [0,   '#f7fbff'],
+          [0.2, '#c6dbef'],
+          [0.4, '#6baed6'],
+          [0.6, '#2171b5'],
+          [0.8, '#08519c'],
+          [1,   '#08306b']
+        ],
+        colorbar: {
+          title: 'Cu (%)',
+          tickfont: { color: '#ffffff' },
+          titlefont: { color: '#ffffff' }
         },
-        margin: { l: 0, r: 0, t: 0, b: 0 },
-        font: { color: '#ffffff' }
-      };
+        opacity: 0.85
+      }
+    };
 
-      Plotly.newPlot('plot', [trace], layout, { responsive: true });
-    });
+    // Pit boundary trace — translucent mesh surface
+    var pitTrace = {
+      type: 'mesh3d',
+      name: 'Pit Boundary',
+      x: pitLons,
+      y: pitLats,
+      z: pitDepths,
+      alphahull: 5,
+      opacity: 0.15,
+      color: '#ff9900',
+      flatshading: true,
+      lighting: { ambient: 1 },
+      showscale: false
+    };
+
+    var layout = {
+      paper_bgcolor: '#0d1117',
+      scene: {
+        bgcolor: '#0d1117',
+        xaxis: { title: 'Долгота', color: '#ffffff' },
+        yaxis: { title: 'Широта',  color: '#ffffff' },
+        zaxis: {
+          title: 'Глубина (м)',
+          color: '#ffffff',
+          autorange: false,
+          range: [depthMin, depthMax]
+        }
+      },
+      margin: { l: 0, r: 0, t: 0, b: 0 },
+      font: { color: '#ffffff' },
+      legend: {
+        font: { color: '#ffffff' },
+        bgcolor: '#0d1117'
+      }
+    };
+
+    Plotly.newPlot('plot', [pitTrace, oreTrace], layout, { responsive: true });
+  });
 </script>
 </body>
 </html>
