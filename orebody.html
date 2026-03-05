@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src='https://cdn.plot.ly/plotly-2.26.0.min.js'></script>
+</head>
+<body style='margin:0;padding:0;background:#0d1117;'>
+<div id='plot' style='width:100%;height:100vh;'></div>
+<script>
+  fetch('orebody.json')
+    .then(r => r.json())
+    .then(function(data) {
+
+      var lats   = data.map(function(d) { return d["Широта"];  });
+      var lons   = data.map(function(d) { return d["Долгота"]; });
+      var depths = data.map(function(d) { return d["Глубина"]; });
+      var cus    = data.map(function(d) { return d["Cu_%"];    });
+
+      var depthMin = Math.min.apply(null, depths);
+      var depthMax = Math.max.apply(null, depths);
+
+      var trace = {
+        type: 'scatter3d',
+        mode: 'markers',
+        name: 'Ore Body',
+        x: lons,
+        y: lats,
+        z: depths,
+        marker: {
+          size: 2,
+          color: cus,
+          colorscale: [
+            [0,   '#f7fbff'],
+            [0.2, '#c6dbef'],
+            [0.4, '#6baed6'],
+            [0.6, '#2171b5'],
+            [0.8, '#08519c'],
+            [1,   '#08306b']
+          ],
+          colorbar: {
+            title: 'Cu (%)',
+            tickfont: { color: '#ffffff' },
+            titlefont: { color: '#ffffff' }
+          },
+          opacity: 0.85
+        }
+      };
+
+      var layout = {
+        paper_bgcolor: '#0d1117',
+        scene: {
+          bgcolor: '#0d1117',
+          xaxis: { title: 'Долгота', color: '#ffffff' },
+          yaxis: { title: 'Широта',  color: '#ffffff' },
+          zaxis: {
+            title: 'Глубина (м)',
+            color: '#ffffff',
+            autorange: false,
+            range: [depthMin, depthMax]
+          }
+        },
+        margin: { l: 0, r: 0, t: 0, b: 0 },
+        font: { color: '#ffffff' }
+      };
+
+      Plotly.newPlot('plot', [trace], layout, { responsive: true });
+    });
+</script>
+</body>
+</html>
